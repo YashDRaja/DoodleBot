@@ -79,7 +79,7 @@ router.get("/profile", validateToken, (req, res) => {
   res.json(req.user);
 });
 
-router.get("/Auth", validateToken, (req, res) => {
+router.get("/auth", validateToken, (req, res) => {
   res.json("Auth Confirmed");
 })
 
@@ -87,4 +87,5 @@ router.get("/logout", validateToken, (req, res) => {
   res.clearCookie("access-token");
   res.json("logged out");
 });
+
 module.exports = router;
