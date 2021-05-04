@@ -15,6 +15,22 @@ module.exports = (sequelize, DataTypes) => {
                 notEmpty: true
             }
         },
+        email: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            unique: true,
+            validate: {
+              isEmail: {
+                msg: "Must be a valid email address",
+              }
+            }
+        }
     });
+    User.associate = (models) => {
+        User.hasMany(models.Games, {
+            onDelete: "cascade",
+            foreignKey: 'user_id'
+        });
+    }
     return User;
 };

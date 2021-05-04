@@ -36,16 +36,17 @@ router.get("/", async (req, res) => {
 //   }
 // });
 
-router.post("/register", (req, res) => {
-  const { username, password } = req.body;
+router.post("/register", async (req, res) => {
+  const { username, password, email } = req.body;
   console.log(username);
   bcrypt.hash(password, 10).then((hash) => {
     Users.create({
       username: username,
       password: hash,
+      email: email,
     })
       .then(() => {
-        res.json(user);
+        res.json({});
       })
       .catch((err) => {
         if (err) {
@@ -57,33 +58,33 @@ router.post("/register", (req, res) => {
 
 router.post("/login", async (req, res) => {
   const { username, password } = req.body;
-  const user = await Users.findOne({where: {username: username}});
+  const user = await Users.findOne({ where: { username: username } });
 
-  if (!user) res.json({error: "User Doesn't Exist"});
+  if (!user) res.json({ error: "User Doesn't Exist" });
   else {
-      bcrypt.compare(password, user.password).then((match) => {
-          if (!match) res.json({error: "Wrong Username/Password Combination"});
-          else {
-            const accessToken = createTokens(user);
-            res.cookie("access-token", accessToken, {
-              maxAge: 60 * 60 * 24 * 30 * 1000,
-              httpOnly: true,
-            })
-            res.json("Logged In");
-          } 
-      });
+    bcrypt.compare(password, user.password).then((match) => {
+      if (!match) res.json({ error: "Wrong Username/Password Combination" });
+      else {
+        const accessToken = createTokens(user);
+        res.cookie("access-token", accessToken, {
+          maxAge: 60 * 60 * 24 * 30 * 1000,
+          httpOnly: true,
+        })
+        res.json("Logged In");
+      }
+    });
   }
 });
 
-router.get("/profile", validateToken, (req, res) => {
+router.get("/profile", validateToken, async (req, res) => {
   res.json(req.user);
 });
 
-router.get("/auth", validateToken, (req, res) => {
+router.get("/auth", validateToken, async (req, res) => {
   res.json("Auth Confirmed");
 })
 
-router.get("/logout", validateToken, (req, res) => {
+router.get("/logout", validateToken, async (req, res) => {
   res.clearCookie("access-token");
   res.json("logged out");
 });

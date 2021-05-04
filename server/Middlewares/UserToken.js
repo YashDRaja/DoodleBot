@@ -13,7 +13,7 @@ const validateToken = (req, res, next) => {
   const accessToken = req.cookies["access-token"];
 
   if (!accessToken)
-    return res.status(400).json({ error: "User not Authenticated!" });
+    return res.json({ error: "User not Authenticated!" });
 
   try {
     const validToken = verify(accessToken, process.env.ACCESSTOKEN);
@@ -22,7 +22,7 @@ const validateToken = (req, res, next) => {
       return next();
     }
   } catch (err) {
-    return res.status(400).json({ error: err });
+    return res.json({ error: err });
   }
 };
 
