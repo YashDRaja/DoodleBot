@@ -1,12 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Stage, Layer, Line, Rect } from 'react-konva';
+import { Stage, Layer, Line } from 'react-konva';
 import * as tf from '@tensorflow/tfjs';
 
 const Canvas = props => {
   const [tool, setTool] = useState('pen');
   const [lines, setLines] = useState([]);
   const [coords, setCoords] = useState([]);
-  //const [tempCoords, setTempCoords] = useState([]);
   const [model, setModel] = useState();
   const loadModel = async () => {
     console.log('loading');
@@ -50,6 +49,8 @@ const Canvas = props => {
       max: max_coords
     }
   }
+  
+
 
   const getImageData = (e) => {
     const mbb = getMinBox();
@@ -102,12 +103,12 @@ const Canvas = props => {
   const findIndicesOfMax = (inp, count) => {
     var outp = [];
     for (var i = 0; i < inp.length; i++) {
-      outp.push(i); // add index to output array
+      outp.push(i);
       if (outp.length > count) {
         outp.sort((a, b) => {
             return inp[b] - inp[a];
-        }); // descending sort the output array
-        outp.pop(); // remove the last index (index of smallest element in output array)
+        });
+        outp.pop();
       }
     }
     return outp;
@@ -115,26 +116,19 @@ const Canvas = props => {
 
   const findTopValues = (inp, count) => {
     var outp = [];
-    let indices = findIndicesOfMax(inp, count)
-    // show 5 greatest scores
-    for (var i = 0; i < indices.length; i++)
+    let indices = findIndicesOfMax(inp, count);
+    for (var i = 0; i < indices.length; i++) {
       outp[i] = inp[indices[i]]
+    }
     return outp
   }
 
-  function preprocess(imgData) {
+  const preprocess = (imgData) => {
     return tf.tidy(() => {
-      //convert to a tensor
       let tensor = tf.browser.fromPixels(imgData, 1);
-      
-      //resize 
       const resized = tf.image.resizeBilinear(tensor, [28, 28]).toFloat();
-      
-      //normalize 
       const offset = tf.scalar(255.0);
       const normalized = tf.scalar(1.0).sub(resized.div(offset));
-
-      //We add a dimension to get a batch shape
       const batched = normalized.expandDims(0);
       return batched;
     })
@@ -148,33 +142,19 @@ const Canvas = props => {
   };
 
   const handleMouseMove = (e) => {
-    // no drawing - skipping
     if (!isDrawing.current) {
       return;
     }
     const stage = e.target.getStage();
     const point = stage.getPointerPosition();
-
-    // if (tempCoords.length > 10) {
-    //   setCoords(coords.concat(tempCoords));
-    //   setTempCoords([]);
-    // }
-
-    // setTempCoords(tempCoords.concat({x: point.x, y: point.y}));
     setCoords(coords => [...coords, {x: point.x, y: point.y}]);
-
     let lastLine = lines[lines.length - 1];
-    // add point
     lastLine.points = lastLine.points.concat([point.x, point.y]);
-
-    // replace last
     lines.splice(lines.length - 1, 1, lastLine);
     setLines(lines.concat());
   };
 
   const handleMouseUp = (e) => {
-    //setCoords(coords.concat(tempCoords));
-    //setTempCoords([]);
     getFrame(e);
     isDrawing.current = false;
   };
