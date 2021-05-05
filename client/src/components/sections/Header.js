@@ -111,7 +111,7 @@ const Header = (props) => {
                 display="block">
                 <MenuButton style={{ cursor: "pointer" }} src="https://bit.ly/dan-abramov" as={Avatar} />
                 <MenuList>
-                  <MenuItem color="primary.400"><Icon as={FaUserAlt} />&nbsp;Account</MenuItem>
+                  <MenuItem color="primary.400"><Link to="/account"><Icon as={FaUserAlt} />&nbsp;Account</Link></MenuItem>
                   <MenuItem color="primary.400" onClick={async () => {
                     axios.get('http://localhost:3001/users/logout', { withCredentials: true })
                       .then((response) => {

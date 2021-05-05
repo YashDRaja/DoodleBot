@@ -27,7 +27,7 @@ export default function CreateAccountForm({
   const [password, setPassword] = useState('');
   const [showPass, setShowPass] = useState(false);
   let history = useHistory();
-  const { setAuthState }= useContext(AuthContext);
+  const { setAuthState } = useContext(AuthContext);
 
   const handleShowPass = () => setShowPass(!showPass);
 
@@ -108,7 +108,6 @@ export default function CreateAccountForm({
       mb={16}
       {...rest}
     >
-
         <Box borderRadius="1rem" bg="white" w="100%" p={4} color="primary.300" minW='40vw'>
           <Stack align="center" spacing={4}>
             <Heading

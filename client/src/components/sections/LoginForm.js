@@ -24,7 +24,7 @@ export default function LoginForm({
   const [showPass, setShowPass] = useState(false);
   const handleShowPass = () => setShowPass(!showPass);
   let history = useHistory();
-  const { setAuthState }= useContext(AuthContext);
+  const { setAuthState } = useContext(AuthContext);
   return (
     <Flex
       align="center"
