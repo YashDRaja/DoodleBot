@@ -7,6 +7,7 @@ require('dotenv').config();
 
 //const { sign } = require('jsonwebtoken');
 const { createTokens, validateToken } = require("../Middlewares/UserToken");
+const { NONE } = require("sequelize");
 
 router.get("/", async (req, res) => {
   const listOfUsers = await Users.findAll();
@@ -40,13 +41,25 @@ router.post("/register", async (req, res) => {
   const { username, password, email } = req.body;
   console.log(username);
   bcrypt.hash(password, 10).then((hash) => {
+    console.log(password);
     Users.create({
       username: username,
       password: hash,
       email: email,
     })
-      .then(() => {
-        res.json({});
+      .then(async () => {
+        const user = await Users.findOne({ where: { username: username } });
+        const accessToken = createTokens(user);
+        res.cookie("access-token", accessToken, {
+          maxAge: 60 * 60 * 24 * 30 * 1000,
+          httpOnly: true,
+          path: '/',
+          sameSite: 'strict',
+          //secure: true
+          //overwrite: true
+        })
+        console.log(res.cookies);
+        res.json("Logged In");
       })
       .catch((err) => {
         if (err) {
@@ -57,6 +70,8 @@ router.post("/register", async (req, res) => {
 });
 
 router.post("/login", async (req, res) => {
+  // res.cookie("access-token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IjEiLCJpZCI6OCwiaWF0IjoxNjIwMTczODU5fQ.2akRPRh-IlyoxMol7O44Fpn2k3iFKa2RMkNxm6nFm7I",
+  // {maxAge: 60 * 60 * 24 * 30 * 1000}).send("created")
   const { username, password } = req.body;
   const user = await Users.findOne({ where: { username: username } });
 
@@ -69,6 +84,10 @@ router.post("/login", async (req, res) => {
         res.cookie("access-token", accessToken, {
           maxAge: 60 * 60 * 24 * 30 * 1000,
           httpOnly: true,
+          path: '/',
+          sameSite: 'strict',
+          //secure: true
+          //overwrite: true
         })
         res.json("Logged In");
       }

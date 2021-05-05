@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import { Icon, Box, Flex, Text, Button, Menu, MenuButton, Avatar, MenuList, MenuItem } from "@chakra-ui/react";
 import { FaSignOutAlt, FaUserAlt } from "react-icons/fa"
 import Logo from "../ui/Logo";
+import axios from 'axios';
+import { AuthContext } from '../../helpers/AuthContext'
 
 const MenuLink = ({ children, isLast, to = "/", ...rest }) => {
+  
   return (
     <Text
       mb={{ base: isLast ? 0 : 8, sm: 0 }}
@@ -42,7 +45,7 @@ const MenuIcon = () => (
 const Header = (props) => {
   const [show, setShow] = React.useState(false);
   const toggleMenu = () => setShow(!show);
-
+  const { authState, setAuthState } = useContext(AuthContext);
   return (
     <Flex
       as="nav"
@@ -82,30 +85,50 @@ const Header = (props) => {
           <MenuLink to="/">Home</MenuLink>
           <MenuLink to="/vs-ai">Vs. AI</MenuLink>
           <MenuLink to="/multiplayer">Multiplayer</MenuLink>
-          <MenuLink to="/login">Login</MenuLink>
-          <MenuLink to="/createAccount">
-            <Button
-              size="sm"
-              rounded="md"
-              color={["white", "white", "white", "white"]}
-              bg={["primary.500", "primary.500", "primary.500", "primary.500"]}
-              _hover={{
-                bg: ["primary.800", "primary.800", "primary.800", "primary.800"]
-              }}
-            >
-              Create Account
+          {!authState && (
+            <>
+              <MenuLink to="/login">Login</MenuLink>
+              <MenuLink to="/createAccount">
+                <Button
+                  size="sm"
+                  rounded="md"
+                  color={["white", "white", "white", "white"]}
+                  bg={["primary.500", "primary.500", "primary.500", "primary.500"]}
+                  _hover={{
+                    bg: ["primary.800", "primary.800", "primary.800", "primary.800"]
+                  }}
+                >
+                  Create Account
             </Button>
-          </MenuLink>
-          <Menu
-            mb={{ base: 0, sm: 0 }}
-            mr={{ base: 0, sm: 0 }}
-            display="block">
-            <MenuButton style={{cursor: "pointer"}} src="https://bit.ly/dan-abramov" as={Avatar}/>
-            <MenuList>
-              <MenuItem color="primary.400"><Icon as={FaUserAlt}/>&nbsp;Account</MenuItem>
-              <MenuItem color="primary.400"><Icon as={FaSignOutAlt}/>&nbsp;Sign out</MenuItem>
-            </MenuList>
-          </Menu>
+              </MenuLink>
+            </>
+          )}
+          {authState && (
+            <>
+              <Menu
+                mb={{ base: 0, sm: 0 }}
+                mr={{ base: 0, sm: 0 }}
+                display="block">
+                <MenuButton style={{ cursor: "pointer" }} src="https://bit.ly/dan-abramov" as={Avatar} />
+                <MenuList>
+                  <MenuItem color="primary.400"><Icon as={FaUserAlt} />&nbsp;Account</MenuItem>
+                  <MenuItem color="primary.400" onClick={async () => {
+                    axios.get('http://localhost:3001/users/logout', { withCredentials: true })
+                      .then((response) => {
+                        if (response.data.error) {
+                          console.log(response.data.error);
+                        } else {
+                          console.log(response);
+                          setAuthState(false);
+                        }
+                      }).catch((err) => {
+                        console.log(err);
+                      })
+                  }}><Icon as={FaSignOutAlt} />&nbsp;Sign out</MenuItem>
+                </MenuList>
+              </Menu>
+            </>
+          )}
         </Flex>
       </Box>
     </Flex>

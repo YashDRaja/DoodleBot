@@ -11,10 +11,9 @@ const createTokens = (user) => {
 
 const validateToken = (req, res, next) => {
   const accessToken = req.cookies["access-token"];
-
-  if (!accessToken)
+  if (!accessToken) {
     return res.json({ error: "User not Authenticated!" });
-
+  }
   try {
     const validToken = verify(accessToken, process.env.ACCESSTOKEN);
     if (validToken) {
@@ -22,6 +21,7 @@ const validateToken = (req, res, next) => {
       return next();
     }
   } catch (err) {
+    console.log('help');
     return res.json({ error: err });
   }
 };

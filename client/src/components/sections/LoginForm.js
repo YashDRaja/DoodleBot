@@ -1,5 +1,9 @@
-import React from "react";
+import {useHistory} from 'react-router-dom';
+import axios from 'axios';
+import { AuthContext } from '../../helpers/AuthContext'
+import { React, useState, useContext } from "react";
 import { Field, Form, Formik } from "formik";
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import {
   Box,
   Button,
@@ -7,6 +11,9 @@ import {
   Heading,
   Stack,
   Input,
+  InputGroup,
+  InputRightElement,
+  IconButton
 } from "@chakra-ui/react";
 
 export default function LoginForm({
@@ -14,6 +21,10 @@ export default function LoginForm({
   ctaText,
   ...rest
 }) {
+  const [showPass, setShowPass] = useState(false);
+  const handleShowPass = () => setShowPass(!showPass);
+  let history = useHistory();
+  const { setAuthState }= useContext(AuthContext);
   return (
     <Flex
       align="center"
@@ -47,10 +58,22 @@ export default function LoginForm({
               confirmPassword: '',
             }}
             onSubmit={(values, actions) => {
-              setTimeout(() => {
-                alert(JSON.stringify(values, null, 2))
-                actions.setSubmitting(false)
-              }, 1000)
+              axios.post('http://localhost:3001/users/login', {username: values.username, password: values.password}, {withCredentials: true})
+              .then((response) => {
+                try {
+                  if (response.data.error) { 
+                    console.log(response.data.error);
+                  } else {
+                    console.log(response);
+                    setAuthState(true);
+                    history.push("/");
+                  }
+                
+                } catch (e) {
+                  console.log(e);
+                }
+              })
+              actions.setSubmitting(false)
             }}
           >
             {(props) => (
@@ -63,7 +86,19 @@ export default function LoginForm({
                   </Field>
                   <Field name="password">
                     {({ field, form }) => (
-                      <Input {...field} variant="filled" id="password" placeholder="Password" />
+                      <InputGroup size="md">
+                        <Input
+                          {...field}
+                          variant="filled"
+                          id="password"
+                          placeholder="Password"
+                          type={showPass ? "text" : "password"}
+                        />
+                        <InputRightElement>
+                            {showPass ? <IconButton onClick={handleShowPass} size="sm" icon={<FaRegEye/>}/> :
+                              <IconButton onClick={handleShowPass} size="sm" icon={<FaRegEyeSlash/>}/>}
+                        </InputRightElement>
+                      </InputGroup>
                     )}
                   </Field>
                   <Button

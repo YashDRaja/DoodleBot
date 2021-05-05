@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import { React, useState, useContext } from "react";
+import {useHistory} from 'react-router-dom';
 import { Field, Form, Formik } from "formik";
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import {
   Box,
   Button,
@@ -9,7 +11,12 @@ import {
   Input,
   FormControl,
   FormErrorMessage,
+  InputGroup,
+  InputRightElement,
+  IconButton,
 } from "@chakra-ui/react";
+import axios from 'axios';
+import { AuthContext } from '../../helpers/AuthContext'
 
 export default function CreateAccountForm({
   title,
@@ -18,6 +25,11 @@ export default function CreateAccountForm({
 }) {
 
   const [password, setPassword] = useState('');
+  const [showPass, setShowPass] = useState(false);
+  let history = useHistory();
+  const { setAuthState }= useContext(AuthContext);
+
+  const handleShowPass = () => setShowPass(!showPass);
 
   const validateFirstName = (value) => {
     let error;
@@ -119,10 +131,18 @@ export default function CreateAccountForm({
                 confirmPassword: '',
               }}
               onSubmit={(values, actions) => {
-                setTimeout(() => {
-                  alert(JSON.stringify(values, null, 2))
-                  actions.setSubmitting(false)
-                }, 1000)
+                values.password = values.confirmPassword;
+                axios.post('http://localhost:3001/users/register', {username: values.username, password: values.password, email: values.email}, {withCredentials: true})
+                .then((response) => {
+                  if (response.data.error) console.log(response.data.error);
+                  console.log(response);
+                  setAuthState(true);
+                  history.push("/");
+                }).catch((err) => {
+                  console.log(err);
+                })
+                actions.setSubmitting(false)
+
               }}
             >
               {(props) => (
@@ -163,7 +183,21 @@ export default function CreateAccountForm({
                     <Field name="password" validate={validatePassword}>
                       {({ field, form }) => (
                         <FormControl isInvalid={form.errors.password && form.touched.password}>
-                          <Input {...field} variant="filled" value={password} onChange={handleChange} id="password" placeholder="Password" />
+                          <InputGroup size="md">
+                            <Input
+                              {...field}
+                              variant="filled"
+                              value={password}
+                              onChange={handleChange}
+                              id="password"
+                              placeholder="Password"
+                              type={showPass ? "text" : "password"}
+                            />
+                            <InputRightElement>
+                                {showPass ? <IconButton onClick={handleShowPass} size="sm" icon={<FaRegEye/>}/> :
+                                 <IconButton onClick={handleShowPass} size="sm" icon={<FaRegEyeSlash/>}/>}
+                            </InputRightElement>
+                          </InputGroup>
                           <FormErrorMessage>{form.errors.password}</FormErrorMessage>
                         </FormControl>
                       )}
@@ -171,7 +205,19 @@ export default function CreateAccountForm({
                     <Field name="confirmPassword" validate={validateConfirmPassword}>
                       {({ field, form }) => (
                         <FormControl isInvalid={form.errors.confirmPassword && form.touched.confirmPassword}>
-                          <Input {...field} variant="filled" id="confirmPassword" placeholder="Confirm Password" />
+                        <InputGroup size="md">
+                            <Input
+                              {...field}
+                              variant="filled"
+                              id="confirmPassword"
+                              placeholder="Confirm Password"
+                              type={showPass ? "text" : "password"}
+                            />
+                            <InputRightElement>
+                                {showPass ? <IconButton onClick={handleShowPass} size="sm" icon={<FaRegEye/>}/> :
+                                 <IconButton onClick={handleShowPass} size="sm" icon={<FaRegEyeSlash/>}/>}
+                            </InputRightElement>
+                          </InputGroup>
                           <FormErrorMessage>{form.errors.confirmPassword}</FormErrorMessage>
                         </FormControl>
                       )}
