@@ -19,6 +19,9 @@ app.use("/users", userRouter);
 const gameRouter = require("./routes/Games");
 app.use("/game", gameRouter);
 
+const modelRouter = require("./routes/Model");
+app.use("/model", modelRouter);
+
 
 db.sequelize.sync().then(() => {
   app.listen(3001, () => {
