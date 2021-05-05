@@ -1,5 +1,6 @@
-import React from "react";
+import { React, useState } from "react";
 import { Field, Form, Formik } from "formik";
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import {
   Box,
   Button,
@@ -7,6 +8,9 @@ import {
   Heading,
   Stack,
   Input,
+  InputGroup,
+  InputRightElement,
+  IconButton
 } from "@chakra-ui/react";
 
 export default function LoginForm({
@@ -14,6 +18,11 @@ export default function LoginForm({
   ctaText,
   ...rest
 }) {
+
+  const [showPass, setShowPass] = useState(false);
+
+  const handleShowPass = () => setShowPass(!showPass);
+
   return (
     <Flex
       align="center"
@@ -63,7 +72,19 @@ export default function LoginForm({
                   </Field>
                   <Field name="password">
                     {({ field, form }) => (
-                      <Input {...field} variant="filled" id="password" placeholder="Password" />
+                      <InputGroup size="md">
+                        <Input
+                          {...field}
+                          variant="filled"
+                          id="password"
+                          placeholder="Password"
+                          type={showPass ? "text" : "password"}
+                        />
+                        <InputRightElement>
+                            {showPass ? <IconButton onClick={handleShowPass} size="sm" icon={<FaRegEye/>}/> :
+                              <IconButton onClick={handleShowPass} size="sm" icon={<FaRegEyeSlash/>}/>}
+                        </InputRightElement>
+                      </InputGroup>
                     )}
                   </Field>
                   <Button

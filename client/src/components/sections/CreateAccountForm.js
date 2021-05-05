@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Field, Form, Formik } from "formik";
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import {
   Box,
   Button,
@@ -9,6 +10,9 @@ import {
   Input,
   FormControl,
   FormErrorMessage,
+  InputGroup,
+  InputRightElement,
+  IconButton,
 } from "@chakra-ui/react";
 
 export default function CreateAccountForm({
@@ -18,6 +22,9 @@ export default function CreateAccountForm({
 }) {
 
   const [password, setPassword] = useState('');
+  const [showPass, setShowPass] = useState(false);
+
+  const handleShowPass = () => setShowPass(!showPass);
 
   const validateFirstName = (value) => {
     let error;
@@ -34,7 +41,7 @@ export default function CreateAccountForm({
   const validateLastName = (value) => {
     let error;
     if (!value) {
-      error = 'First Name is required!';
+      error = 'Last Name is required!';
     } else if (value.length < 2) {
       error = 'Too Short!';
     } else if (value.length > 50) {
@@ -119,6 +126,7 @@ export default function CreateAccountForm({
                 confirmPassword: '',
               }}
               onSubmit={(values, actions) => {
+                values.password = values.confirmPassword;
                 setTimeout(() => {
                   alert(JSON.stringify(values, null, 2))
                   actions.setSubmitting(false)
@@ -163,7 +171,21 @@ export default function CreateAccountForm({
                     <Field name="password" validate={validatePassword}>
                       {({ field, form }) => (
                         <FormControl isInvalid={form.errors.password && form.touched.password}>
-                          <Input {...field} variant="filled" value={password} onChange={handleChange} id="password" placeholder="Password" />
+                          <InputGroup size="md">
+                            <Input
+                              {...field}
+                              variant="filled"
+                              value={password}
+                              onChange={handleChange}
+                              id="password"
+                              placeholder="Password"
+                              type={showPass ? "text" : "password"}
+                            />
+                            <InputRightElement>
+                                {showPass ? <IconButton onClick={handleShowPass} size="sm" icon={<FaRegEye/>}/> :
+                                 <IconButton onClick={handleShowPass} size="sm" icon={<FaRegEyeSlash/>}/>}
+                            </InputRightElement>
+                          </InputGroup>
                           <FormErrorMessage>{form.errors.password}</FormErrorMessage>
                         </FormControl>
                       )}
@@ -171,7 +193,19 @@ export default function CreateAccountForm({
                     <Field name="confirmPassword" validate={validateConfirmPassword}>
                       {({ field, form }) => (
                         <FormControl isInvalid={form.errors.confirmPassword && form.touched.confirmPassword}>
-                          <Input {...field} variant="filled" id="confirmPassword" placeholder="Confirm Password" />
+                        <InputGroup size="md">
+                            <Input
+                              {...field}
+                              variant="filled"
+                              id="confirmPassword"
+                              placeholder="Confirm Password"
+                              type={showPass ? "text" : "password"}
+                            />
+                            <InputRightElement>
+                                {showPass ? <IconButton onClick={handleShowPass} size="sm" icon={<FaRegEye/>}/> :
+                                 <IconButton onClick={handleShowPass} size="sm" icon={<FaRegEyeSlash/>}/>}
+                            </InputRightElement>
+                          </InputGroup>
                           <FormErrorMessage>{form.errors.confirmPassword}</FormErrorMessage>
                         </FormControl>
                       )}
