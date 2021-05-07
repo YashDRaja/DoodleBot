@@ -39,9 +39,7 @@ router.get("/", async (req, res) => {
 
 router.post("/register", async (req, res) => {
   const { username, password, email, firstName, lastName } = req.body;
-  console.log(username);
   bcrypt.hash(password, 10).then((hash) => {
-    console.log(password);
     Users.create({
       username: username,
       password: hash,
@@ -60,7 +58,6 @@ router.post("/register", async (req, res) => {
           //secure: true
           //overwrite: true
         })
-        console.log(res.cookies);
         res.json("Logged In");
       })
       .catch((err) => {

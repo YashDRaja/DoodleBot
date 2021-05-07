@@ -3,6 +3,7 @@ const router = express.Router();
 const { Users, Games } = require("../models");
 
 const { validateToken } = require("../Middlewares/UserToken");
+const { response } = require("express");
 
 router.get("/", async (req, res) => {
     const listOfGames = await Games.findAll();
@@ -44,22 +45,27 @@ router.post("/create", validateToken, async (req, res) => {
 router.get("/profile", validateToken, async (req, res) => {
     const user = await Users.findOne({ where: { username: req.user.validToken.username } });
     console.log('start');
-    const userGames = await user.getGames();
-    let games = [];
-    console.log(userGames)
-    for (let i = 0; i < userGames.length; ++i) {
-        
-        await userGames[i].getRounds().then((response) => {
-            try {
-                games.push({game_type: userGames[i].game_type, rounds: response});
-                if (i == userGames.length - 1) {
-                    res.json(games);
+    user.getGames().then(async (userGames) => {
+        let games = [];
+        if (userGames.length == 0) {
+            res.json([]);
+        }
+        for (let i = 0; i < userGames.length; ++i) {
+            
+            await userGames[i].getRounds().then((response) => {
+                try {
+                    games.push({game_type: userGames[i].game_type, rounds: response});
+                    if (i == userGames.length - 1) {
+                        res.json(games);
+                    }
+                } catch (e) {
+                    res.json({error: "No rounds"});
                 }
-            } catch (e) {
-                res.json({error: "No rounds"});
-            }
-        });
-    }
+            });
+        }
+    }).catch((e) => {
+        console.log(e);
+    })
     
 });
 

@@ -34,7 +34,6 @@ export default function History({
   useEffect(() => {
     axios.get('http://localhost:3001/game/profile', { withCredentials: true })
       .then((response) => {
-        console.log('start');
         if (response.data.error) {
           setPlayHistory([
           <Box align="center" minW="70vw" borderWidth="1px" borderRadius="lg" bg="#f5ffed">
