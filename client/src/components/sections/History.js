@@ -36,6 +36,7 @@ export default function History({
     axios.get('http://localhost:3001/game/profile', { withCredentials: true })
       .then((response) => {
         if (response.data.error) {
+          setLoading(true);
           setPlayHistory([
           <Box align="center" minW="70vw" borderWidth="1px" borderRadius="lg" bg="#f5ffed">
             USER NOT LOGGED IN
