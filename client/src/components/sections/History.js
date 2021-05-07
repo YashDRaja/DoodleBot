@@ -10,6 +10,7 @@ import {
   Stack,
   Text,
   Spacer,
+  Spinner,
   Input,
   FormControl,
   FormErrorMessage,
@@ -29,9 +30,9 @@ export default function History({
   ...rest
 }) {
   const [playHistory, setPlayHistory] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-
-  useEffect(() => {
+  const historyLoad = () => {
     axios.get('http://localhost:3001/game/profile', { withCredentials: true })
       .then((response) => {
         if (response.data.error) {
@@ -108,13 +109,17 @@ export default function History({
             )
           }
           setPlayHistory(games);
+          setLoading(true);
           console.log(response.data);
         }
       }).catch((e) => {
-        console.log('bruh');
         console.log(e);
-      })
+      });
+      
+  }
 
+  useEffect(() => {
+    historyLoad();
   }, []);
 
 
@@ -129,11 +134,15 @@ export default function History({
       mb={16}
       {...rest}
     >
+      {loading ? (
       <Stack>
-        <Accordion allowMultiple>
+        <Accordion minW="70vw" allowMultiple>
           {playHistory}
         </Accordion>
       </Stack>
+      ) : (
+        <Spinner size="lg" color="white"/>
+      )}
     </Flex>
   );
 }

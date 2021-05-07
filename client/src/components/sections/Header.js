@@ -1,6 +1,6 @@
-import React, { useContext } from "react";
+import { React, useContext, useState } from "react";
 import { Link } from "react-router-dom";
-import { Icon, Box, Flex, Text, Button, Menu, MenuButton, Avatar, MenuList, MenuItem } from "@chakra-ui/react";
+import { Icon, Box, Flex, Text, Button, Menu, MenuButton, Avatar, Spinner, MenuList, MenuItem } from "@chakra-ui/react";
 import { FaSignOutAlt, FaUserAlt } from "react-icons/fa"
 import Logo from "../ui/Logo";
 import axios from 'axios';
@@ -43,9 +43,9 @@ const MenuIcon = () => (
 );
 
 const Header = (props) => {
-  const [show, setShow] = React.useState(false);
+  const [show, setShow] = useState(false);
   const toggleMenu = () => setShow(!show);
-  const { authState, setAuthState } = useContext(AuthContext);
+  const { authState, setAuthState, authLoading } = useContext(AuthContext);
   return (
     <Flex
       as="nav"
@@ -84,7 +84,10 @@ const Header = (props) => {
           <MenuLink to="/">Home</MenuLink>
           <MenuLink to="/vs-ai">Vs. AI</MenuLink>
           <MenuLink to="/multiplayer">Multiplayer</MenuLink>
-          {!authState && (
+          {!authLoading && (<>
+            <Spinner size="lg" color="white"/>
+          </>)}
+          {!authState && authLoading && (
             <>
               <MenuLink to="/login">Login</MenuLink>
               <MenuLink to="/createAccount">
@@ -102,7 +105,7 @@ const Header = (props) => {
               </MenuLink>
             </>
           )}
-          {authState && (
+          {authState && authLoading && (
             <>
               <Menu
                 mb={{ base: 0, sm: 0 }}
@@ -110,7 +113,9 @@ const Header = (props) => {
                 display="block">
                 <MenuButton style={{ cursor: "pointer" }} src="https://bit.ly/dan-abramov" as={Avatar} />
                 <MenuList>
-                  <MenuItem color="primary.400"><Link to="/account"><Icon as={FaUserAlt} />&nbsp;Account</Link></MenuItem>
+                  <Link to="/account">
+                  <MenuItem color="primary.400"><Icon as={FaUserAlt} />&nbsp;Account</MenuItem>
+                  </Link>
                   <MenuItem color="primary.400" onClick={async () => {
                     axios.get('http://localhost:3001/users/logout', { withCredentials: true })
                       .then((response) => {

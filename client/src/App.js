@@ -10,25 +10,26 @@ import axios from 'axios';
 
 const App = () => {
   const [authState, setAuthState] = useState(null);
-
-  useEffect(() => {
-    const fetchAuth = async () => {
-      try {
-      const response = await axios.get("http://localhost:3001/users/auth", { withCredentials: true })
-      if (response.data.error) {
-        setAuthState(false);
-      } else {
-        setAuthState(true);
-      }
-      } catch (e) {
-        console.log(e);
-      }
+  const [authLoading, setAuthLoading] = useState(false);
+  const fetchAuth = async () => {
+    try {
+    const response = await axios.get("http://localhost:3001/users/auth", { withCredentials: true })
+    if (response.data.error) {
+      setAuthState(false);
+    } else {
+      setAuthState(true);
     }
+    setAuthLoading(true);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+  useEffect(() => {
     fetchAuth();
   }, []);
 
   return (
-    <AuthContext.Provider value={{ authState, setAuthState }}>
+    <AuthContext.Provider value={{ authState, setAuthState, authLoading }}>
       <BrowserRouter>
         <Switch>
           <Route path="/login">
