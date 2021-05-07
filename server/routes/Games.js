@@ -43,9 +43,10 @@ router.post("/create", validateToken, async (req, res) => {
 
 router.get("/profile", validateToken, async (req, res) => {
     const user = await Users.findOne({ where: { username: req.user.validToken.username } });
+    console.log('start');
     const userGames = await user.getGames();
     let games = [];
-
+    console.log(userGames)
     for (let i = 0; i < userGames.length; ++i) {
         
         await userGames[i].getRounds().then((response) => {

@@ -16,6 +16,11 @@ import {
   InputGroup,
   InputRightElement,
   IconButton,
+  Accordion,
+  AccordionButton,
+  AccordionItem,
+  AccordionPanel,
+  AccordionIcon,
 } from "@chakra-ui/react";
 import axios from 'axios';
 import { AuthContext } from '../../helpers/AuthContext'
@@ -23,14 +28,13 @@ import { AuthContext } from '../../helpers/AuthContext'
 export default function History({
   ...rest
 }) {
-  const [playHistory, setPlayHistory] = useState([])
+  const [playHistory, setPlayHistory] = useState([]);
 
 
   useEffect(() => {
-    let playHistory;
     axios.get('http://localhost:3001/game/profile', { withCredentials: true })
       .then((response) => {
-
+        console.log('start');
         if (response.data.error) {
           setPlayHistory([
           <Box align="center" minW="70vw" borderWidth="1px" borderRadius="lg" bg="#f5ffed">
@@ -47,58 +51,70 @@ export default function History({
               </Box>
             )
           }
+                   
+
           for (let i = 0; i < response.data.length; i++) {
+            let panels = [];
+
+            for (let k = 0; k < response.data[i].rounds.length; ++k) {
+              panels.push(
+                <Box minW="70vw" borderWidth="1px" borderRadius="lg" bg="#f5ffed">
+                    <Flex>
+                      <Stack alignItems="center" p={3}>
+                      <Box h="10">
+                        Given Word:
+                        </Box>
+                        <Box h="10">
+                        {response.data[i].rounds[k].given_word}
+                        </Box>
+                      </Stack>
+                      <Spacer />
+                      <Stack alignItems="center" p={3}>
+                        <Box  h="10">
+                        Guessed Word:
+                        </Box>
+                        <Box  h="10">
+                        {response.data[i].rounds[k].guessed_word}
+                        </Box>
+                      </Stack>
+                      <Spacer />
+                      <Stack alignItems="center" p={3}>
+                        <Box h="10">
+                        Game Date:
+                        </Box>
+                        <Box h="10">
+                        {response.data[i].rounds[k].createdAt.slice(0,10)}
+                        </Box>
+                      </Stack>
+                    </Flex>
+                  </Box>
+              )
+            }
+
             games.push(
-              <Box minW="70vw" borderWidth="1px" borderRadius="lg" bg="#f5ffed">
-                
-                <Flex>
-                  <Stack alignItems="center" p={3}>
-                   <Box h="10">
-                    Given Word:
+              <AccordionItem bg='white'>
+                <h2>
+                  <AccordionButton>
+                    <Box flex="1" textAlign="left">
+                      Game {i}, Game Type: {response.data[i].game_type},
                     </Box>
-                    <Box h="10">
-                    {response.data[i].given_word}
-                    </Box>
-                  </Stack>
-                  <Spacer />
-                  <Stack alignItems="center" p={3}>
-                    <Box  h="10">
-                    Guessed Word:
-                    </Box>
-                    <Box  h="10">
-                    {response.data[i].guessed_word}
-                    </Box>
-                  </Stack>
-                  <Spacer />
-                  <Stack alignItems="center" p={3}>
-                    <Box h="10">
-                    Game Type:
-                    </Box>
-                    <Box h="10">
-                    {response.data[i].game_type}
-                    </Box>
-                  </Stack>
-                  <Spacer />
-                  <Stack alignItems="center" p={3}>
-                    <Box h="10">
-                    Game Date:
-                    </Box>
-                    <Box h="10">
-                    {response.data[i].createdAt.slice(0,10)}
-                    </Box>
-                  </Stack>
-                </Flex>
-              </Box>
+                    <AccordionIcon />
+                  </AccordionButton>
+                </h2>
+                <AccordionPanel pb={4}>                
+                  {panels}
+                </AccordionPanel>
+              </AccordionItem>
 
             )
           }
           setPlayHistory(games);
-          //console.log(response.data);
+          console.log(response.data);
         }
       }).catch((e) => {
+        console.log('bruh');
         console.log(e);
       })
-
 
   }, []);
 
@@ -115,7 +131,9 @@ export default function History({
       {...rest}
     >
       <Stack>
-        {playHistory}
+        <Accordion allowMultiple>
+          {playHistory}
+        </Accordion>
       </Stack>
     </Flex>
   );
