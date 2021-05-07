@@ -7,11 +7,12 @@ const tf = require('@tensorflow/tfjs');
 
 router.get("/", async (req, res) => {
   //const handler = tfn.io.fileSystem("../model/model.json");
-  let curmodel = await tf.loadLayersModel('https://raw.githubusercontent.com/YashDRaja/predictive-whiteboard/main/model/model.json');
-  curmodel.predict(tf.zeros([1,28,28,1]));
+//  let curmodel = await tf.loadLayersModel('https://raw.githubusercontent.com/YashDRaja/predictive-whiteboard/main/model/model.json');
+  let curmodel = await tf.loadLayersModel('https://raw.githubusercontent.com/zaidalyafeai/zaidalyafeai.github.io/master/sketcher/model2/model.json');
+  //curmodel.predict(tf.zeros([1,28,28,1]));
   const fs = require('fs');
   let class_names = [];
-  await fs.readFile('../model/class_names.txt', (err, data) => {
+  await fs.readFile('../model2/class_names.txt', (err, data) => {
     if (err) throw err;
     const text = data.toString();
     const lst = text.split(/\n/);

@@ -24,7 +24,21 @@ module.exports = (sequelize, DataTypes) => {
                 msg: "Must be a valid email address",
               }
             }
-        }
+        },
+        firstName: {
+            type: DataTypes.STRING,
+            allowNULL: false,
+            validate: {
+                notEmpty: true
+            }
+        },
+        lastName: {
+            type: DataTypes.STRING,
+            allowNULL: false,
+            validate: {
+                notEmpty: true
+            }
+        },
     });
     User.associate = (models) => {
         User.hasMany(models.Games, {

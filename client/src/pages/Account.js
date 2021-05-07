@@ -1,9 +1,11 @@
 import React from "react";
-import BasicLayout from "../components/layouts/BasicLayout";
+import History from "../components/sections/History";
+import ColumnLayout from "../components/layouts/ColumnLayout";
 
 export default function Account() {
   return (
-    <BasicLayout>
-    </BasicLayout>
+    <ColumnLayout>
+      <History/>
+    </ColumnLayout>
   );
 }

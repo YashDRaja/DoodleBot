@@ -38,7 +38,7 @@ router.get("/", async (req, res) => {
 // });
 
 router.post("/register", async (req, res) => {
-  const { username, password, email } = req.body;
+  const { username, password, email, firstName, lastName } = req.body;
   console.log(username);
   bcrypt.hash(password, 10).then((hash) => {
     console.log(password);
@@ -46,6 +46,8 @@ router.post("/register", async (req, res) => {
       username: username,
       password: hash,
       email: email,
+      firstName: firstName,
+      lastName: lastName
     })
       .then(async () => {
         const user = await Users.findOne({ where: { username: username } });
