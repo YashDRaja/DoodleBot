@@ -45,15 +45,21 @@ router.get("/profile", validateToken, async (req, res) => {
     const user = await Users.findOne({ where: { username: req.user.validToken.username } });
     const userGames = await user.getGames();
     let games = [];
+
     for (let i = 0; i < userGames.length; ++i) {
+        
         await userGames[i].getRounds().then((response) => {
-            games.push({game_type: userGames.game_type, rounds: response});
-            if (i == userGames.length - 1) {
-                res.json(games);
+            try {
+                games.push({game_type: userGames[i].game_type, rounds: response});
+                if (i == userGames.length - 1) {
+                    res.json(games);
+                }
+            } catch (e) {
+                res.json({error: "No rounds"});
             }
         });
     }
-    res.json({error: "No rounds"});
+    
 });
 
 module.exports = router;
