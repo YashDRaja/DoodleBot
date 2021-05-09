@@ -15,8 +15,7 @@ module.exports = (sequelize, DataTypes) => {
           }
       },
       round_num: {
-          type: DataTypes.NUMBER,
-          allowNull: false
+          type: DataTypes.STRING
       }
   });
   return Round;

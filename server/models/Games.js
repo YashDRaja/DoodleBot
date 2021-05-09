@@ -8,8 +8,7 @@ module.exports = (sequelize, DataTypes) => {
             }
         },
         score: {
-            type: DataTypes.NUMBER,
-            allowNull: false
+            type: DataTypes.STRING
         }
     });
     Game.associate = (models) => {
