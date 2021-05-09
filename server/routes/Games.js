@@ -27,7 +27,7 @@ router.post("/create", validateToken, async (req, res) => {
                         guessed_word: rounds[i].guessed_word,
                         round_num: rounds[i].round
                     }).catch((e) => {
-                        res.json({error: e});
+                        res.json({ error: e });
                     })
                 }
                 res.json({});
@@ -50,22 +50,22 @@ router.get("/profile", validateToken, async (req, res) => {
             res.json([]);
         }
         for (let i = 0; i < userGames.length; ++i) {
-            
+
             await userGames[i].getRounds().then((response) => {
                 try {
-                    games.push({game_type: userGames[i].game_type, rounds: response, score: userGames[i].score})
+                    games.push({ game_type: userGames[i].game_type, rounds: response, score: userGames[i].score })
                     if (i == userGames.length - 1) {
                         res.json(games);
                     }
                 } catch (e) {
-                    res.json({error: "No rounds"});
+                    res.json({ error: "No rounds" });
                 }
             });
         }
     }).catch((e) => {
         console.log(e);
     })
-    
+
 });
 
 module.exports = router;

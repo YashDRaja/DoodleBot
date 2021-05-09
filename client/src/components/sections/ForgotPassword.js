@@ -1,7 +1,6 @@
 import axios from 'axios';
-import { React, useState, useContext } from "react";
+import { React, useState } from "react";
 import { Field, Form, Formik } from "formik";
-import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import {
   Box,
   Button,
@@ -9,18 +8,19 @@ import {
   Heading,
   Stack,
   Input,
-  InputGroup,
-  InputRightElement,
-  IconButton
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
 } from "@chakra-ui/react";
 
 export default function ForgotPassword({
-  title,
-  ctaText,
   ...rest
 }) {
-  const [showPass, setShowPass] = useState(false);
-  const handleShowPass = () => setShowPass(!showPass);
+
+  const [checkEmail, setCheckEmail] = useState(false);
+  const [error, setError] = useState(false);
+
   return (
     <Flex
       align="center"
@@ -43,8 +43,7 @@ export default function ForgotPassword({
             textAlign={["center", "center", "left", "left"]}
           >
             Forgot Password
-              </Heading>
-
+          </Heading>
           <Formik
             initialValues={{
               firstName: '',
@@ -58,11 +57,12 @@ export default function ForgotPassword({
               .then((response) => {
                 try {
                   if (response.data.error) { 
-                    console.log(response.data.error);
+                    setCheckEmail(false);
+                    setError(true);
                   } else {
-                    console.log('ok')
+                    setError(false);
+                    setCheckEmail(true);
                   }
-                
                 } catch (e) {
                   console.log(e);
                 }
@@ -85,11 +85,29 @@ export default function ForgotPassword({
                     type="Login"
                   >
                     Submit
-                      </Button>
+                  </Button>
                 </Stack>
               </Form>
             )}
           </Formik>
+          {
+            checkEmail ? (
+              <Alert status="info">
+                <AlertIcon />
+                <AlertTitle mr={2}>Email Sent!</AlertTitle>
+                <AlertDescription>Please check your email to reset your password.</AlertDescription>
+              </Alert>
+            ) : ''
+          }
+          {
+            error ? (
+              <Alert status="error">
+                <AlertIcon />
+                <AlertTitle mr={2}>Error!</AlertTitle>
+                <AlertDescription>Username does not exist.</AlertDescription>
+              </Alert>
+            ) : ''
+          }
         </Stack>
       </Box>
     </Flex>

@@ -81,10 +81,17 @@ router.post("/resetPass", async (req, res) => {
   const { token, password } = req.body;
   try {
     const userToken = await verify(token, process.env.ACCESSTOKEN, { maxAge: 60 * 15 });
-    console.log(userToken);
     if (userToken) {
       bcrypt.hash(password, 10).then(async (hash) => {
-        Users.update({password: hash}, { where: { username: userToken.username}}).then(() => {
+        Users.update({password: hash}, { where: { username: userToken.username}}).then(async () => {
+          const user = await Users.findOne({ where: { username: userToken.username } });
+          const accessToken = createTokens(user);
+          res.cookie("access-token", accessToken, {
+            maxAge: 60 * 60 * 24 * 30 * 1000,
+            httpOnly: true,
+            path: '/',
+            sameSite: 'strict',
+          })
           res.json("Password Reset");
         }).catch((e) => {
           res.json({error: e});
@@ -110,8 +117,7 @@ router.post("/forgotPass", async (req, res) => {
         from: 'predictive.whiteboard@gmail.com',
         to: user.email,
         subject: 'Reset Password',
-        //text: `localhost:3000/password/${accessToken}`
-        html: '<p>Click <a href="http://localhost:3000/password/' + accessToken + '">here</a> to reset your password</p>'
+        html: '<p>Click <a href="http://localhost:3000/password/' + accessToken + '">here</a> to reset your password. This link is only valid for 15 minutes.</p>'
       };
       transporter.sendMail(mailOptions, function(error, info){
         if (error) {

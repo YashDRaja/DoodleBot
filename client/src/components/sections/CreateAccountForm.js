@@ -14,6 +14,10 @@ import {
   InputGroup,
   InputRightElement,
   IconButton,
+  Alert,
+  AlertDescription,
+  AlertTitle,
+  AlertIcon,
 } from "@chakra-ui/react";
 import axios from 'axios';
 import { AuthContext } from '../../helpers/AuthContext'
@@ -26,6 +30,7 @@ export default function CreateAccountForm({
 
   const [password, setPassword] = useState('');
   const [showPass, setShowPass] = useState(false);
+  const [error, setError] = useState(false);
   let history = useHistory();
   const { setAuthState } = useContext(AuthContext);
 
@@ -133,12 +138,14 @@ export default function CreateAccountForm({
                 values.password = values.confirmPassword;
                 axios.post('http://localhost:3001/users/register', {username: values.username, password: values.password, email: values.email, firstName: values.firstName, lastName: values.lastName}, {withCredentials: true})
                 .then((response) => {
-                  if (response.data.error) console.log(response.data.error);
-                  console.log(response);
-                  setAuthState(true);
-                  history.push("/");
+                  if (response.data.error) {
+                    setError(true);
+                  } else {
+                    setAuthState(true);
+                    history.push("/");
+                  }
                 }).catch((err) => {
-                  console.log(err);
+                  setError(true);
                 })
                 actions.setSubmitting(false)
 
@@ -233,6 +240,15 @@ export default function CreateAccountForm({
                 </Form>
               )}
             </Formik>
+            {
+              error ? (
+                <Alert status="error">
+                  <AlertIcon />
+                  <AlertTitle mr={2}>Error!</AlertTitle>
+                  <AlertDescription>Username/Email already exists.</AlertDescription>
+                </Alert>
+              ) : ''
+            }
           </Stack>
         </Box>
     </Flex>

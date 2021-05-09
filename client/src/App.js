@@ -5,7 +5,7 @@ import ForgotPass from "./pages/ForgotPass";
 import ResetPass from "./pages/ResetPass";
 import Login from './pages/Login';
 import CreateAccount from './pages/CreateAccount';
-import Account from './pages/Account';
+import GamesPlayed from './pages/GamesPlayed';
 import Singleplayer from './pages/Singleplayer';
 import { AuthContext } from './helpers/AuthContext';
 import axios from 'axios';
@@ -40,8 +40,8 @@ const App = () => {
           <Route path="/createAccount">
             <CreateAccount />
           </Route>
-          <Route path="/account">
-            <Account />
+          <Route path="/games-played">
+            <GamesPlayed />
           </Route>
           <Route path="/vs-ai">
             <Singleplayer />

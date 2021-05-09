@@ -174,10 +174,15 @@ export default function SinglePlatform({
     const stage = e.target.getStage();
     const point = stage.getPointerPosition();
     setCoords(coords => [...coords, {x: point.x, y: point.y}]);
-    let lastLine = lines[lines.length - 1];
-    lastLine.points = lastLine.points.concat([point.x, point.y]);
-    lines.splice(lines.length - 1, 1, lastLine);
-    setLines(lines.concat());
+    let lastLine;
+    try {
+      lastLine = lines[lines.length - 1];
+      lastLine.points = lastLine.points.concat([point.x, point.y]);
+      lines.splice(lines.length - 1, 1, lastLine);
+      setLines(lines.concat());
+    } catch(e) {
+      console.log(e);
+    }
   }
 
   const handleMouseUp = (e) => {
@@ -247,7 +252,7 @@ export default function SinglePlatform({
               console.log(response.data.error);
             } else {
               onClose();
-              history.push('/account');
+              history.push('/games-played');
             }
           })
           .catch((e) => console.log(e));

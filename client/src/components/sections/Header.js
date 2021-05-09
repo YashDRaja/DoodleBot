@@ -1,7 +1,7 @@
 import { React, useContext, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { Icon, Box, Flex, Text, Button, Menu, MenuButton, Avatar, Spinner, MenuList, MenuItem } from "@chakra-ui/react";
-import { FaSignOutAlt, FaUserAlt } from "react-icons/fa"
+import { FaSignOutAlt, FaHistory } from "react-icons/fa"
 import Logo from "../ui/Logo";
 import axios from 'axios';
 import { AuthContext } from '../../helpers/AuthContext'
@@ -46,6 +46,8 @@ const Header = (props) => {
   const [show, setShow] = useState(false);
   const toggleMenu = () => setShow(!show);
   const { authState, setAuthState, authLoading } = useContext(AuthContext);
+  let history = useHistory();
+
   return (
     <Flex
       as="nav"
@@ -111,10 +113,10 @@ const Header = (props) => {
                 mb={{ base: 0, sm: 0 }}
                 mr={{ base: 0, sm: 0 }}
                 display="block">
-                <MenuButton style={{ cursor: "pointer" }} src="https://bit.ly/dan-abramov" as={Avatar} />
+                <MenuButton style={{ cursor: "pointer" }} src="https://lh3.googleusercontent.com/proxy/ALvje9dxxrHSSOA9mN8IKQ61StEPdZzugqMpHqqvfIgRG8ykvHuXk6KZjRpDm_I1jo3n9gf_NxFPGwvdqWFxPRHDx1QzGlw2v5JeI8qtt-RsW99aZ0nlfbmp3aXGZA" as={Avatar} />
                 <MenuList>
-                  <Link to="/account">
-                  <MenuItem color="primary.400"><Icon as={FaUserAlt} />&nbsp;Account</MenuItem>
+                  <Link to="/games-played">
+                  <MenuItem color="primary.400"><Icon as={FaHistory} />&nbsp;Games Played</MenuItem>
                   </Link>
                   <MenuItem color="primary.400" onClick={async () => {
                     axios.get('http://localhost:3001/users/logout', { withCredentials: true })
@@ -124,6 +126,7 @@ const Header = (props) => {
                         } else {
                           console.log(response);
                           setAuthState(false);
+                          history.push('/');
                         }
                       }).catch((err) => {
                         console.log(err);

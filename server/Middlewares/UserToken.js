@@ -21,7 +21,7 @@ const validateToken = (req, res, next) => {
       return next();
     }
   } catch (err) {
-    console.log('help');
+    res.clearCookie("access-token");
     return res.json({ error: err });
   }
 };

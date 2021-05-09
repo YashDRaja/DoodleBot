@@ -2,6 +2,8 @@ import axios from 'axios';
 import { React, useState, useContext } from "react";
 import { Field, Form, Formik } from "formik";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
+import { useHistory } from "react-router-dom";
+import { AuthContext } from '../../helpers/AuthContext'
 import {
   Box,
   Button,
@@ -11,7 +13,13 @@ import {
   Input,
   InputGroup,
   InputRightElement,
-  IconButton
+  IconButton,
+  FormControl,
+  FormErrorMessage,
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
 } from "@chakra-ui/react";
 import { useParams } from "react-router"
 
@@ -22,8 +30,23 @@ export default function ResetPassword({
 }) {
   const [showPass, setShowPass] = useState(false);
   const handleShowPass = () => setShowPass(!showPass);
+  const [error, setError] = useState(false);
   let { id } = useParams();
-  console.log(id);
+  const { setAuthState } = useContext(AuthContext);
+  let history = useHistory();
+
+  const validatePassword = (value) => {
+    let error;
+    if (!value || value === '') {
+      error = 'Password is required!';
+    } else if (value.length < 8) {
+      error = 'Password must be at least 8 characters!';
+    } else if (value.length > 20) {
+      error = 'Password must not be longer than 20 characters!';
+    }
+    return error;
+  }
+
   return (
     <Flex
       align="center"
@@ -61,13 +84,13 @@ export default function ResetPassword({
               .then((response) => {
                 try {
                   if (response.data.error) { 
-                    console.log(response.data.error);
+                    setError(true);
                   } else {
-                    console.log(response);
+                    setAuthState(true);
+                    history.push("/");
                   }
-                
                 } catch (e) {
-                  console.log(e);
+                  setError(true);
                 }
               })
               actions.setSubmitting(false)
@@ -76,21 +99,24 @@ export default function ResetPassword({
             {(props) => (
               <Form>
                 <Stack align="center" spacing={4} minW="20vw">
-                  <Field name="password">
+                  <Field name="password" validate={validatePassword}>
                     {({ field, form }) => (
-                      <InputGroup size="md">
-                        <Input
-                          {...field}
-                          variant="filled"
-                          id="password"
-                          placeholder="Password"
-                          type={showPass ? "text" : "password"}
-                        />
-                        <InputRightElement>
-                            {showPass ? <IconButton onClick={handleShowPass} size="sm" icon={<FaRegEye/>}/> :
-                              <IconButton onClick={handleShowPass} size="sm" icon={<FaRegEyeSlash/>}/>}
-                        </InputRightElement>
-                      </InputGroup>
+                      <FormControl isInvalid={form.errors.password && form.touched.password}>
+                        <InputGroup size="md">
+                          <Input
+                            {...field}
+                            variant="filled"
+                            id="password"
+                            placeholder="Password"
+                            type={showPass ? "text" : "password"}
+                          />
+                          <InputRightElement>
+                              {showPass ? <IconButton onClick={handleShowPass} size="sm" icon={<FaRegEye/>}/> :
+                                <IconButton onClick={handleShowPass} size="sm" icon={<FaRegEyeSlash/>}/>}
+                          </InputRightElement>
+                        </InputGroup>
+                        <FormErrorMessage>{form.errors.password}</FormErrorMessage>
+                      </FormControl>
                     )}
                   </Field>
                   <Button
@@ -100,11 +126,20 @@ export default function ResetPassword({
                     type="Login"
                   >
                     Submit
-                      </Button>
+                  </Button>
                 </Stack>
               </Form>
             )}
           </Formik>
+          {
+            error ? (
+              <Alert status="error">
+                <AlertIcon />
+                <AlertTitle mr={2}>Error!</AlertTitle>
+                <AlertDescription>This password reset link has expired.</AlertDescription>
+              </Alert>
+            ) : ''
+          }
         </Stack>
       </Box>
     </Flex>

@@ -13,18 +13,22 @@ import {
   Input,
   InputGroup,
   InputRightElement,
-  IconButton
+  IconButton,
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
 } from "@chakra-ui/react";
 
 export default function LoginForm({
-  title,
-  ctaText,
   ...rest
 }) {
   const [showPass, setShowPass] = useState(false);
+  const [error, setError] = useState(false);
   const handleShowPass = () => setShowPass(!showPass);
   let history = useHistory();
   const { setAuthState } = useContext(AuthContext);
+
   return (
     <Flex
       align="center"
@@ -47,7 +51,7 @@ export default function LoginForm({
             textAlign={["center", "center", "left", "left"]}
           >
             Login
-              </Heading>
+          </Heading>
 
           <Formik
             initialValues={{
@@ -61,16 +65,14 @@ export default function LoginForm({
               axios.post('http://localhost:3001/users/login', {username: values.username, password: values.password}, {withCredentials: true})
               .then((response) => {
                 try {
-                  if (response.data.error) { 
-                    console.log(response.data.error);
+                  if (response.data.error) {
+                    setError(true);
                   } else {
-                    console.log(response);
                     setAuthState(true);
                     history.push("/");
                   }
-                
                 } catch (e) {
-                  console.log(e);
+                  setError(true);
                 }
               })
               actions.setSubmitting(false)
@@ -109,11 +111,20 @@ export default function LoginForm({
                     type="Login"
                   >
                     Submit
-                      </Button>
+                  </Button>
                 </Stack>
               </Form>
             )}
           </Formik>
+          {
+            error ? (
+              <Alert status="error">
+                <AlertIcon />
+                <AlertTitle mr={2}>Error!</AlertTitle>
+                <AlertDescription>Invalid username/password combination.</AlertDescription>
+              </Alert>
+            ) : ''
+          }
         </Stack>
       </Box>
     </Flex>

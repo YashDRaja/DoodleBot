@@ -1,30 +1,18 @@
-import { React, useState, useContext, useEffect } from "react";
-import { useHistory } from 'react-router-dom';
-import { Field, Form, Formik } from "formik";
-import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
+import { React, useState, useEffect } from "react";
 import {
   Box,
-  Button,
   Flex,
-  Heading,
-  Stack,
+  VStack,
   Text,
-  Spacer,
   Spinner,
-  Input,
-  FormControl,
-  FormErrorMessage,
-  InputGroup,
-  InputRightElement,
-  IconButton,
   Accordion,
   AccordionButton,
   AccordionItem,
   AccordionPanel,
   AccordionIcon,
+  Table, Thead, Tbody, Tfoot, Tr, Th, Td, Center,
 } from "@chakra-ui/react";
 import axios from 'axios';
-import { AuthContext } from '../../helpers/AuthContext'
 
 export default function History({
   ...rest
@@ -43,72 +31,75 @@ export default function History({
           </Box>
           ])
         } else {
-          //games = response.data.map((game) => {
           let games = [];
-          if (response.data.length == 0) {
+          if (response.data.length === 0) {
             games.push(
               <Box align="center" minW="70vw" borderWidth="1px" borderRadius="lg" bg="#f5ffed">
                 No games played
               </Box>
             )
-          }
-                   
+          } else {
+            let count = 0;
+            games = response.data.map((game) => {
+              count++;
+              let dateCreated = "";
+              let sortedRounds = game.rounds;
+              sortedRounds.sort((a, b) => {
+                return a.round_num - b.round_num;
+              });
 
-          for (let i = 0; i < response.data.length; i++) {
-            let panels = [];
-
-            for (let k = 0; k < response.data[i].rounds.length; ++k) {
-              panels.push(
-                <Box minW="70vw" borderWidth="1px" borderRadius="lg" bg="#f5ffed">
-                    <Flex>
-                      <Stack alignItems="center" p={3}>
-                      <Box h="10">
-                        Given Word:
-                        </Box>
-                        <Box h="10">
-                        {response.data[i].rounds[k].given_word}
-                        </Box>
-                      </Stack>
-                      <Spacer />
-                      <Stack alignItems="center" p={3}>
-                        <Box  h="10">
-                        Guessed Word:
-                        </Box>
-                        <Box  h="10">
-                        {response.data[i].rounds[k].guessed_word}
-                        </Box>
-                      </Stack>
-                      <Spacer />
-                      <Stack alignItems="center" p={3}>
-                        <Box h="10">
-                        Game Date:
-                        </Box>
-                        <Box h="10">
-                        {response.data[i].rounds[k].createdAt.slice(0,10)}
-                        </Box>
-                      </Stack>
-                    </Flex>
-                  </Box>
+              return (
+                <AccordionItem bg='white'>
+                  <h2>
+                    <AccordionButton>
+                      <Box w="100%" textAlign="left">
+                        <Text color="#474B4F" fontWeight="bold" fontSize="xl">Game {count}, Game Type: {game.game_type}</Text>
+                      </Box>
+                      <AccordionIcon />
+                    </AccordionButton>
+                  </h2>
+                  <AccordionPanel pb={4}>
+                    <Table variant="simple">
+                      <Thead>
+                        <Tr>
+                          <Th>Round</Th>
+                          <Th>Target Word</Th>
+                          <Th>AI's Final Guess</Th>
+                        </Tr>
+                      </Thead>
+                      <Tbody>
+                        {
+                          sortedRounds.map((round) => {
+                            dateCreated = round.createdAt.slice(0,10);
+                            return (
+                              <Tr>
+                                <Td>{round.round_num}</Td>
+                                <Td>{round.given_word}</Td>
+                                <Td>{round.guessed_word}</Td>
+                              </Tr>
+                            )
+                          })
+                        }
+                      </Tbody>
+                      <Tfoot>
+                        <Tr>
+                          <Th></Th>
+                          <Th>Final Score</Th>
+                          <Th>{game.score}</Th>
+                        </Tr>
+                        <Tr>
+                          <Th></Th>
+                          <Th>Game Date</Th>
+                          <Th>{dateCreated}</Th>
+                        </Tr>
+                      </Tfoot>
+                    </Table>
+                  </AccordionPanel>
+                </AccordionItem>
               )
-            }
-
-            games.push(
-              <AccordionItem bg='white'>
-                <h2>
-                  <AccordionButton>
-                    <Box flex="1" textAlign="left">
-                      Game {i}, Game Type: {response.data[i].game_type},
-                    </Box>
-                    <AccordionIcon />
-                  </AccordionButton>
-                </h2>
-                <AccordionPanel pb={4}>                
-                  {panels}
-                </AccordionPanel>
-              </AccordionItem>
-
-            )
+            })
           }
+          
           setPlayHistory(games);
           setLoading(true);
           console.log(response.data);
@@ -125,25 +116,32 @@ export default function History({
 
 
   return (
-    <Flex
-      align="flex-start"
-      justify={{ base: "center", md: "start", xl: "flex-start" }}
-      direction={{ base: "column-reverse", md: "row" }}
-      wrap="no-wrap"
-      minH="70vh"
-      px={8}
-      mb={16}
-      {...rest}
-    >
+    <>
       {loading ? (
-      <Stack>
-        <Accordion minW="70vw" allowMultiple>
-          {playHistory}
-        </Accordion>
-      </Stack>
+        <Flex
+          align="flex-start"
+          justify={{ base: "center", md: "start", xl: "flex-start" }}
+          direction={{ base: "column-reverse", md: "row" }}
+          wrap="no-wrap"
+          minH="70vh"
+          bg="white"
+          borderRadius="3xl"
+          px={8}
+          mb={16}
+          {...rest}
+        >
+            <Center>
+              <VStack>
+                <Text color="#474B4F" fontWeight="bold" fontSize="5xl" pb={4} pt={4}>Games Played</Text>
+                <Accordion minW="40vw" allowMultiple>
+                  {playHistory}
+                </Accordion>
+              </VStack>
+            </Center>
+        </Flex>
       ) : (
         <Spinner size="lg" color="white"/>
       )}
-    </Flex>
+    </>
   );
 }

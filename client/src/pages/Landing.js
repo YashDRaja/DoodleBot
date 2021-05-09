@@ -7,10 +7,10 @@ export default function Landing() {
     <LandingLayout>
       <Hero
         title="Landing Page Title"
-        subtitle="This is the subheader section for the landing page"
+        subtitle="A machine learning powered drawing game!"
         image="https://raw.githubusercontent.com/YashDRaja/predictive-whiteboard/main/client/src/LandingImage.png"
-        ctaText="Join now"
-        ctaLink="/createAccount"
+        ctaText="Play Against AI"
+        ctaLink="/vs-ai"
       />
     </LandingLayout>
   );
