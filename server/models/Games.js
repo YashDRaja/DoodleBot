@@ -6,6 +6,10 @@ module.exports = (sequelize, DataTypes) => {
             validate : {
                 isIn: [["AI", "Human"]],
             }
+        },
+        score: {
+            type: DataTypes.NUMBER,
+            allowNull: false
         }
     });
     Game.associate = (models) => {

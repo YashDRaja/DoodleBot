@@ -12,21 +12,20 @@ router.get("/", async (req, res) => {
 
 
 router.post("/create", validateToken, async (req, res) => {
-    const { rounds, game_type } = req.body;
-//    const { given_word, guessed_word, game_type } = req.body;
+    const { rounds, game_type, score } = req.body;
 
     const user = await Users.findOne({ where: { username: req.user.validToken.username } });
     user.createGame({
-       // given_word: given_word,
-     //   guessed_word: guessed_word,
-        game_type:game_type
+        game_type: game_type,
+        score: score
     })
         .then((game) => {
             (async () => {
                 for (let i = 0; i < rounds.length; i++) {
                     game.createRound({
                         given_word: rounds[i].given_word,
-                        guessed_word: rounds[i].guessed_word
+                        guessed_word: rounds[i].guessed_word,
+                        round_num: rounds[i].round
                     }).catch((e) => {
                         res.json({error: e});
                     })
@@ -54,7 +53,7 @@ router.get("/profile", validateToken, async (req, res) => {
             
             await userGames[i].getRounds().then((response) => {
                 try {
-                    games.push({game_type: userGames[i].game_type, rounds: response});
+                    games.push({game_type: userGames[i].game_type, rounds: response, score: userGames[i].score})
                     if (i == userGames.length - 1) {
                         res.json(games);
                     }

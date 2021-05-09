@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { React, useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { Stage, Layer, Line } from 'react-konva';
 import * as tf from '@tensorflow/tfjs';
 import {
@@ -13,6 +13,7 @@ export default function SinglePlatform({
   ...rest
 }) {
 
+  let history = useHistory();
   const [tool, setTool] = useState('pen');
   const [lines, setLines] = useState([]);
   const [coords, setCoords] = useState([]);
@@ -200,8 +201,8 @@ export default function SinglePlatform({
       reset();
       let newGame = {
         round: round,
-        target: target,
-        guess: preds.length > 0 ? preds[0] : ''
+        given_word: target,
+        guessed_word: preds.length > 0 ? preds[0] : ''
       }
       setGamesPlayed(gamesPlayed => [...gamesPlayed, newGame]);
       setRound(round + 1);
@@ -237,6 +238,21 @@ export default function SinglePlatform({
     setPaused(false);
   }
 
+  const closeLastGame = () => {
+    axios.post('http://localhost:3001/game/create',
+                          {game_type: 'AI', score: score, rounds: gamesPlayed},
+                          { withCredentials: true })
+          .then((response) => {
+            if (response.data.error) {
+              console.log(response.data.error);
+            } else {
+              onClose();
+              history.push('/account');
+            }
+          })
+          .catch((e) => console.log(e));
+  }
+
   useEffect(() => {
     loadModel();
     loadClassNames();
@@ -253,8 +269,8 @@ export default function SinglePlatform({
       reset();
       let newGame = {
         round: round,
-        target: target,
-        guess: preds.length > 0 ? preds[0] : ''
+        given_word: target,
+        guessed_word: preds.length > 0 ? preds[0] : ''
       }
       setGamesPlayed(gamesPlayed => [...gamesPlayed, newGame]);
       setScore(score + 1);
@@ -307,8 +323,8 @@ export default function SinglePlatform({
                             return (
                               <Tr>
                                 <Td>{game.round}</Td>
-                                <Td>{game.target}</Td>
-                                <Td isNumeric>{game.guess}</Td>
+                                <Td>{game.given_word}</Td>
+                                <Td isNumeric>{game.guessed_word}</Td>
                               </Tr>
                             )
                           })
@@ -342,11 +358,9 @@ export default function SinglePlatform({
           <ModalFooter>
               {
                 round === 11 ? (
-                  <Link to="/">
-                    <Button colorScheme="green" onClick={closeModal}>
-                      Close
-                    </Button>
-                  </Link>
+                  <Button colorScheme="green" onClick={closeLastGame}>
+                    Close
+                  </Button>
                 ) : (
                   <Button colorScheme="green" onClick={closeModal}>
                     Continue to Round {round}
