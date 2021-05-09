@@ -1,6 +1,4 @@
-import {Link, useHistory} from 'react-router-dom';
 import axios from 'axios';
-import { AuthContext } from '../../helpers/AuthContext'
 import { React, useState, useContext } from "react";
 import { Field, Form, Formik } from "formik";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
@@ -16,15 +14,13 @@ import {
   IconButton
 } from "@chakra-ui/react";
 
-export default function LoginForm({
+export default function ForgotPassword({
   title,
   ctaText,
   ...rest
 }) {
   const [showPass, setShowPass] = useState(false);
   const handleShowPass = () => setShowPass(!showPass);
-  let history = useHistory();
-  const { setAuthState } = useContext(AuthContext);
   return (
     <Flex
       align="center"
@@ -46,7 +42,7 @@ export default function LoginForm({
             color="primary.400"
             textAlign={["center", "center", "left", "left"]}
           >
-            Login
+            Forgot Password
               </Heading>
 
           <Formik
@@ -58,15 +54,13 @@ export default function LoginForm({
               confirmPassword: '',
             }}
             onSubmit={(values, actions) => {
-              axios.post('http://localhost:3001/users/login', {username: values.username, password: values.password}, {withCredentials: true})
+              axios.post('http://localhost:3001/users/forgotPass', {username: values.username}, {withCredentials: true})
               .then((response) => {
                 try {
                   if (response.data.error) { 
                     console.log(response.data.error);
                   } else {
-                    console.log(response);
-                    setAuthState(true);
-                    history.push("/");
+                    console.log('ok')
                   }
                 
                 } catch (e) {
@@ -79,29 +73,11 @@ export default function LoginForm({
             {(props) => (
               <Form>
                 <Stack align="center" spacing={4} minW="20vw">
-                  <Field name="username">
+                <Field name="username">
                     {({ field, form }) => (
                       <Input {...field} variant="filled" id="username" placeholder="Username" />
                     )}
                   </Field>
-                  <Field name="password">
-                    {({ field, form }) => (
-                      <InputGroup size="md">
-                        <Input
-                          {...field}
-                          variant="filled"
-                          id="password"
-                          placeholder="Password"
-                          type={showPass ? "text" : "password"}
-                        />
-                        <InputRightElement>
-                            {showPass ? <IconButton onClick={handleShowPass} size="sm" icon={<FaRegEye/>}/> :
-                              <IconButton onClick={handleShowPass} size="sm" icon={<FaRegEyeSlash/>}/>}
-                        </InputRightElement>
-                      </InputGroup>
-                    )}
-                  </Field>
-                  <Link to="/forgotPass"><Box><u>Forgot Password</u></Box></Link>
                   <Button
                     mt={4}
                     colorScheme="green"

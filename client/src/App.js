@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import Landing from "./pages/Landing";
+import ForgotPass from "./pages/ForgotPass";
+import ResetPass from "./pages/ResetPass";
 import Login from './pages/Login';
 import CreateAccount from './pages/CreateAccount';
 import Account from './pages/Account';
@@ -43,6 +45,12 @@ const App = () => {
           </Route>
           <Route path="/vs-ai">
             <Singleplayer />
+          </Route>
+          <Route path="/forgotPass">
+            <ForgotPass />
+          </Route>
+          <Route path="/password/:id">
+            <ResetPass />
           </Route>
           <Route path="/">
             <Landing />

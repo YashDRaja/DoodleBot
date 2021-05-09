@@ -1,6 +1,4 @@
-import {Link, useHistory} from 'react-router-dom';
 import axios from 'axios';
-import { AuthContext } from '../../helpers/AuthContext'
 import { React, useState, useContext } from "react";
 import { Field, Form, Formik } from "formik";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
@@ -15,16 +13,17 @@ import {
   InputRightElement,
   IconButton
 } from "@chakra-ui/react";
+import { useParams } from "react-router"
 
-export default function LoginForm({
+export default function ResetPassword({
   title,
   ctaText,
   ...rest
 }) {
   const [showPass, setShowPass] = useState(false);
   const handleShowPass = () => setShowPass(!showPass);
-  let history = useHistory();
-  const { setAuthState } = useContext(AuthContext);
+  let { id } = useParams();
+  console.log(id);
   return (
     <Flex
       align="center"
@@ -46,7 +45,7 @@ export default function LoginForm({
             color="primary.400"
             textAlign={["center", "center", "left", "left"]}
           >
-            Login
+            Reset Password
               </Heading>
 
           <Formik
@@ -58,15 +57,13 @@ export default function LoginForm({
               confirmPassword: '',
             }}
             onSubmit={(values, actions) => {
-              axios.post('http://localhost:3001/users/login', {username: values.username, password: values.password}, {withCredentials: true})
+              axios.post('http://localhost:3001/users/resetPass', {token: id, password: values.password}, {withCredentials: true})
               .then((response) => {
                 try {
                   if (response.data.error) { 
                     console.log(response.data.error);
                   } else {
                     console.log(response);
-                    setAuthState(true);
-                    history.push("/");
                   }
                 
                 } catch (e) {
@@ -79,11 +76,6 @@ export default function LoginForm({
             {(props) => (
               <Form>
                 <Stack align="center" spacing={4} minW="20vw">
-                  <Field name="username">
-                    {({ field, form }) => (
-                      <Input {...field} variant="filled" id="username" placeholder="Username" />
-                    )}
-                  </Field>
                   <Field name="password">
                     {({ field, form }) => (
                       <InputGroup size="md">
@@ -101,7 +93,6 @@ export default function LoginForm({
                       </InputGroup>
                     )}
                   </Field>
-                  <Link to="/forgotPass"><Box><u>Forgot Password</u></Box></Link>
                   <Button
                     mt={4}
                     colorScheme="green"

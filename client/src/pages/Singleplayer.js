@@ -1,11 +1,11 @@
 import React from 'react';
 import BasicLayout from '../components/layouts/BasicLayout';
-import SinglePlatform from '../components/sections/SinglePlatform';
+import Canvas from '../components/sections/Canvas';
 
 export default function Singleplayer() {
   return (
     <BasicLayout>
-      <SinglePlatform />
+      <Canvas />
     </BasicLayout>
   );
 }
