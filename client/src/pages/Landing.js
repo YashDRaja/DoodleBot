@@ -8,7 +8,7 @@ export default function Landing() {
       <Hero
         title="Landing Page Title"
         subtitle="This is the subheader section for the landing page"
-        image="LandingImage.png"
+        image="https://raw.githubusercontent.com/YashDRaja/predictive-whiteboard/main/client/src/LandingImage.png"
         ctaText="Join now"
         ctaLink="/createAccount"
       />
