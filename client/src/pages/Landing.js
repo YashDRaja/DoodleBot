@@ -8,7 +8,7 @@ export default function Landing() {
       <Hero
         title="Landing Page Title"
         subtitle="This is the subheader section for the landing page"
-        image="https://source.unsplash.com/collection/404339/800x600"
+        image="LandingImage.png"
         ctaText="Join now"
         ctaLink="/createAccount"
       />
