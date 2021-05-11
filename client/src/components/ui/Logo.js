@@ -5,7 +5,7 @@ export default function Logo(props) {
   return (
     <Box {...props}>
       <Text fontSize="x-large" fontWeight="bold">
-        Predictive Whiteboard
+        DoodleBot
       </Text>
     </Box>
   );

@@ -53,7 +53,7 @@ export default function ForgotPassword({
               confirmPassword: '',
             }}
             onSubmit={(values, actions) => {
-              axios.post('http://localhost:3001/users/forgotPass', {username: values.username}, {withCredentials: true})
+              axios.post('/users/forgotPass', {username: values.username}, {withCredentials: true})
               .then((response) => {
                 try {
                   if (response.data.error) { 

@@ -9,12 +9,12 @@ const Canvas = props => {
   const [model, setModel] = useState();
   const loadModel = async () => {
     console.log('loading');
-    let curmodel = await tf.loadLayersModel('https://raw.githubusercontent.com/YashDRaja/predictive-whiteboard/main/model/model.json');
+    let curmodel = await tf.loadLayersModel('https://raw.githubusercontent.com/YashDRaja/DoodleBot/main/model/model.json');
     setModel(curmodel);
   }
   const loadClassNames = async () => {
     let arr = [];
-    fetch('https://raw.githubusercontent.com/YashDRaja/predictive-whiteboard/main/model/class_names.txt')
+    fetch('https://raw.githubusercontent.com/YashDRaja/DoodleBot/main/model/class_names.txt')
     .then((r) => {return r.text()})
     .then(text => {
       const lst = text.split(/\n/);

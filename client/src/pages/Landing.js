@@ -6,9 +6,9 @@ export default function Landing() {
   return (
     <LandingLayout>
       <Hero
-        title="Landing Page Title"
+        title="Welcome to DoodleBot"
         subtitle="A machine learning powered drawing game!"
-        image="https://raw.githubusercontent.com/YashDRaja/predictive-whiteboard/main/client/src/LandingImage.png"
+        image="https://raw.githubusercontent.com/YashDRaja/DoodleBot/main/client/src/LandingImage.png"
         ctaText="Play Against AI"
         ctaLink="/vs-ai"
       />

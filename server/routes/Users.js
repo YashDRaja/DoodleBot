@@ -1,11 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const { Users } = require("../models");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 
 require('dotenv').config();
 
-//const { sign } = require('jsonwebtoken');
 const { createTokens, validateToken } = require("../Middlewares/UserToken");
 const { NONE } = require("sequelize");
 const { sign, verify } = require("jsonwebtoken");
@@ -13,38 +12,10 @@ const nodemailer = require('nodemailer');
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: 'predictive.whiteboard@gmail.com',
+    user: 'doodlebotgame@gmail.com',
     pass: process.env.EMAILPASSWORD
   }
 });
-
-router.get("/", async (req, res) => {
-  const listOfUsers = await Users.findAll();
-  res.json(listOfUsers);
-});
-
-// router.post("/create", async (req, res) => {
-//   const { username, password } = req.body;
-//   const user = await Users.findOne({where: {username: username}});
-//   if (!user) {
-//     bcrypt.hash(password, 10).then((hash) => {
-//         Users.create({
-//           username: username,
-//           password: hash,
-//         })
-//           .then(() => {
-//             res.json(user);
-//           })
-//           .catch((err) => {
-//             if (err) {
-//               res.json({ error: err });
-//             }
-//           });
-//     })
-//   } else {
-//    res.json({error: "username already exisits"});
-//   }
-// });
 
 router.post("/register", async (req, res) => {
   const { username, password, email, firstName, lastName } = req.body;
@@ -64,8 +35,7 @@ router.post("/register", async (req, res) => {
           httpOnly: true,
           path: '/',
           sameSite: 'strict',
-          //secure: true
-          //overwrite: true
+          secure: true,
         })
         res.json("Logged In");
       })
@@ -91,6 +61,7 @@ router.post("/resetPass", async (req, res) => {
             httpOnly: true,
             path: '/',
             sameSite: 'strict',
+            secure: true,
           })
           res.json("Password Reset");
         }).catch((e) => {
@@ -114,10 +85,10 @@ router.post("/forgotPass", async (req, res) => {
         {expiresIn: 60 * 15}
       );
       const mailOptions = {
-        from: 'predictive.whiteboard@gmail.com',
+        from: 'doodlebotgame@gmail.com',
         to: user.email,
         subject: 'Reset Password',
-        html: '<p>Click <a href="http://localhost:3000/password/' + accessToken + '">here</a> to reset your password. This link is only valid for 15 minutes.</p>'
+        html: '<p>Click <a href="https://doodlebot.tech/password/' + accessToken + '">here</a> to reset your password. This link is only valid for 15 minutes.</p>'
       };
       transporter.sendMail(mailOptions, function(error, info){
         if (error) {
@@ -134,8 +105,6 @@ router.post("/forgotPass", async (req, res) => {
 });
 
 router.post("/login", async (req, res) => {
-  // res.cookie("access-token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IjEiLCJpZCI6OCwiaWF0IjoxNjIwMTczODU5fQ.2akRPRh-IlyoxMol7O44Fpn2k3iFKa2RMkNxm6nFm7I",
-  // {maxAge: 60 * 60 * 24 * 30 * 1000}).send("created")
   const { username, password } = req.body;
   const token = req.cookies["access-token"];
   const user = await Users.findOne({ where: { username: username } });
@@ -151,8 +120,7 @@ router.post("/login", async (req, res) => {
           httpOnly: true,
           path: '/',
           sameSite: 'strict',
-          //secure: true
-          //overwrite: true
+          secure: true,
         })
         res.json("Logged In");
       }

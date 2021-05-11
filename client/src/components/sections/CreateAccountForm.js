@@ -136,7 +136,7 @@ export default function CreateAccountForm({
               }}
               onSubmit={(values, actions) => {
                 values.password = values.confirmPassword;
-                axios.post('http://localhost:3001/users/register', {username: values.username, password: values.password, email: values.email, firstName: values.firstName, lastName: values.lastName}, {withCredentials: true})
+                axios.post('/users/register', {username: values.username, password: values.password, email: values.email, firstName: values.firstName, lastName: values.lastName}, {withCredentials: true})
                 .then((response) => {
                   if (response.data.error) {
                     setError(true);

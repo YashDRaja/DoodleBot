@@ -36,14 +36,14 @@ export default function SinglePlatform({
   const isDrawing = useRef(false);
   
   const loadModel = async () => {
-    let curmodel = await tf.loadLayersModel('https://raw.githubusercontent.com/YashDRaja/predictive-whiteboard/main/model/model.json');
+    let curmodel = await tf.loadLayersModel('https://raw.githubusercontent.com/YashDRaja/DoodleBot/main/model/model.json');
     curmodel.predict(tf.zeros([1, 28, 28, 1]));
     setModel(curmodel);
   }
   
   const loadClassNames = async () => {
     let arr = [];
-    fetch('https://raw.githubusercontent.com/YashDRaja/predictive-whiteboard/main/model/class_names.txt')
+    fetch('https://raw.githubusercontent.com/YashDRaja/DoodleBot/main/model/class_names.txt')
     .then((r) => {return r.text()})
     .then(text => {
       const lst = text.split(/\n/);
@@ -244,18 +244,21 @@ export default function SinglePlatform({
   }
 
   const closeLastGame = () => {
-    axios.post('http://localhost:3001/game/create',
-                          {game_type: 'AI', score: score, rounds: gamesPlayed},
-                          { withCredentials: true })
+    axios.post('/game/create',
+                {game_type: 'AI', score: score, rounds: gamesPlayed},
+                { withCredentials: true })
           .then((response) => {
             if (response.data.error) {
-              console.log(response.data.error);
+              onClose();
+              history.push('/'); 
             } else {
               onClose();
               history.push('/games-played');
             }
-          })
-          .catch((e) => console.log(e));
+          }).catch((e) => {
+            onClose();
+            history.push('/');
+          });
   }
 
   useEffect(() => {
@@ -329,7 +332,7 @@ export default function SinglePlatform({
                               <Tr>
                                 <Td>{game.round}</Td>
                                 <Td>{game.given_word}</Td>
-                                <Td isNumeric>{game.guessed_word}</Td>
+                                <Td>{game.guessed_word}</Td>
                               </Tr>
                             )
                           })
@@ -339,7 +342,7 @@ export default function SinglePlatform({
                         <Tr>
                           <Th></Th>
                           <Th>Final Score</Th>
-                          <Th isNumeric>{score}</Th>
+                          <Th>{score}</Th>
                         </Tr>
                       </Tfoot>
                     </Table>
@@ -352,7 +355,7 @@ export default function SinglePlatform({
                         Nice  ! The AI was able to predict that you drew {preds[0]} with an accuracy of:
                       </Text>
                       <Text color="#064C2E" fontWeight="bold" fontSize="5xl">
-                        {probs[0].toFixed(4)*100}%
+                        {(probs[0]*100).toString().substring(0,5)}%
                       </Text>
                     </VStack>
                   </Center>

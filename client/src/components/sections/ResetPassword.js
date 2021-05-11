@@ -80,7 +80,7 @@ export default function ResetPassword({
               confirmPassword: '',
             }}
             onSubmit={(values, actions) => {
-              axios.post('http://localhost:3001/users/resetPass', {token: id, password: values.password}, {withCredentials: true})
+              axios.post('/users/resetPass', {token: id, password: values.password}, {withCredentials: true})
               .then((response) => {
                 try {
                   if (response.data.error) { 

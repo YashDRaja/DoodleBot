@@ -15,7 +15,7 @@ const App = () => {
   const [authLoading, setAuthLoading] = useState(false);
   const fetchAuth = async () => {
     try {
-    const response = await axios.get("http://localhost:3001/users/auth", { withCredentials: true })
+    const response = await axios.get("/users/auth", { withCredentials: true })
     if (response.data.error) {
       setAuthState(false);
     } else {

@@ -21,7 +21,7 @@ export default function History({
   const [loading, setLoading] = useState(false);
 
   const historyLoad = () => {
-    axios.get('http://localhost:3001/game/profile', { withCredentials: true })
+    axios.get('/game/profile', { withCredentials: true })
       .then((response) => {
         if (response.data.error) {
           setLoading(true);

@@ -119,7 +119,7 @@ const Header = (props) => {
                   <MenuItem color="primary.400"><Icon as={FaHistory} />&nbsp;Games Played</MenuItem>
                   </Link>
                   <MenuItem color="primary.400" onClick={async () => {
-                    axios.get('http://localhost:3001/users/logout', { withCredentials: true })
+                    axios.get('/users/logout', { withCredentials: true })
                       .then((response) => {
                         if (response.data.error) {
                           console.log(response.data.error);

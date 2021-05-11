@@ -62,7 +62,7 @@ export default function LoginForm({
               confirmPassword: '',
             }}
             onSubmit={(values, actions) => {
-              axios.post('http://localhost:3001/users/login', {username: values.username, password: values.password}, {withCredentials: true})
+              axios.post('/users/login', {username: values.username, password: values.password}, {withCredentials: true})
               .then((response) => {
                 try {
                   if (response.data.error) {

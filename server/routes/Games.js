@@ -5,12 +5,6 @@ const { Users, Games } = require("../models");
 const { validateToken } = require("../Middlewares/UserToken");
 const { response } = require("express");
 
-router.get("/", async (req, res) => {
-    const listOfGames = await Games.findAll();
-    res.json(listOfGames);
-});
-
-
 router.post("/create", validateToken, async (req, res) => {
     const { rounds, game_type, score } = req.body;
 
