@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "cd ../client && yarn install && yarn build && cd ../server && yarn install && node index.js"
+    "start": "node index.js"
   },
   "dependencies": {
     "@tensorflow/tfjs": "^3.6.0",
